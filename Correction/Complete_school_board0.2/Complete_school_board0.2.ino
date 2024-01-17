@@ -861,7 +861,7 @@ String translate(String word_to_translate){
     for (int j = 0; j < NB_WORDS; ++j){
       if (id == translated_list.id[j]){
         sending_id = translated_list.id[(j+1) % (NB_WORDS)]; // if the words is at the end of the list, the "next" word will be the first of the list
-        addlog('Translation'+ translated_list.mot[j+1) % (NB_WORDS)])
+        addlog('Translation'+ translated_list.mot[(j+1) % (NB_WORDS)])
         break;
       }
     }
