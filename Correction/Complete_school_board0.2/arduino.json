@@ -1,0 +1,7 @@
+{
+    "board": "MiniCore:avr:328",
+    "programmer": "arduino:avrispmkii",
+    "sketch": "sketch_sep28aemeteurrecepteur0.4.ino",
+    "port": "COM4",
+    "configuration": "bootloader=uart0,eeprom=keep,variant=modelP,BOD=2v7,LTO=Os_flto,clock=8MHz_internal"
+}
