@@ -1,6 +1,0 @@
-{
-    "board": "arduino:avr:uno",
-    "programmer": "arduino:avrispmkii",
-    "sketch": "sketch_oct06aMaster0.2.ino",
-    "port": "COM3"
-}
