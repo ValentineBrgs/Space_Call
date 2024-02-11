@@ -6,3 +6,4 @@ Repository for Space Call project
 - Yaroslav Pinchuk
 - Borodin Oleksandr
 - Vladyslav Charchenko
+- Gleb Volokhov
