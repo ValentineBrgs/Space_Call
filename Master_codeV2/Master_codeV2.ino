@@ -7,7 +7,7 @@
 
 ///////////////////////I2C Communication with Schools///////////////////////
 const int sdaPin = A0; // Change this
-const int sclPin = A0; // Change this
+const int sclPin = A1; // Change this
 SoftWire sw(sdaPin, sclPin);
 char swTxBuffer[32]; // These buffers must be at least as large as the largest read or write you perform.
 char swRxBuffer[32]; // These buffers must be at least as large as the largest read or write you perform.
@@ -26,8 +26,7 @@ const int T_delayStartNewRound = 1 * 10 * 1000; // Delay between the end of the 
 bool StartNewRound = true; // Indicates whether we are allowed to start a new round or not
 bool EndRound = false;      // Indicates whether we are allowed to end the round or not
 
-void setup()
-{
+void setup(){
     Serial.begin(9600);
 
     // initSchoolI2C(); // Initialization of the school I2C bus
@@ -43,21 +42,17 @@ void setup()
     delay(1000);
 }
 
-void loop()
-{
+void loop(){
     // Regularly check for logs to record
-    if (delayGetLog.isExpired())
-    {
-        for (int i = 0; i < SchoolNumber; i++)
-        {
+    if (delayGetLog.isExpired()){
+        for (int i = 0; i < SchoolNumber; i++){
             getLog(I2CAddressSchool[i]);
         }
         delayGetLog.repeat();
     }
 
     // Check if we can start a new round
-    if (millis() - lastTime_EndRound > T_delayStartNewRound && StartNewRound)
-    {
+    if (millis() - lastTime_EndRound > T_delayStartNewRound && StartNewRound){
         lastTime_NewRound = millis();
         StartNewRound = false;
         EndRound = true;
@@ -65,15 +60,13 @@ void loop()
         // Start the loop
 
         // Initialization
-        for (int i = 0; i < SchoolNumber; i++)
-        {
+        for (int i = 0; i < SchoolNumber; i++){
             sendMessage(I2CAddressSchool[i], 0x01); // Init LDR
             Serial.println("Request Arduino " + String(I2CAddressSchool[i]) + " Init LDR"); // DEBUG
         }
 
         // Loop that activates listening for school s+1 and transmission for school s
-        for (int s = firstSchool; firstSchool + SchoolNumber;)
-        {
+        for (int s = firstSchool; firstSchool + SchoolNumber;){
             // Listen order
             firstSchool = (s + 2) % SchoolNumber;
             sendMessage(I2CAddressSchool[firstSchool], 0x03);
@@ -89,8 +82,7 @@ void loop()
     }
 
     // Check if we should end the round
-    if (millis() - lastTime_NewRound > T_delayEndRound && EndRound)
-    {
+    if (millis() - lastTime_NewRound > T_delayEndRound && EndRound){
         lastTime_EndRound = millis();
         StartNewRound = true;
         EndRound = false;
@@ -109,8 +101,7 @@ void loop()
 
 ////////////////////////////////// School I2C Communication /////////////////////////////////
 
-void initSchoolI2C()
-{
+void initSchoolI2C(){
     sw.setTxBuffer(swTxBuffer, sizeof(swTxBuffer));
     sw.setRxBuffer(swRxBuffer, sizeof(swRxBuffer));
     sw.setDelay_us(5);
@@ -119,31 +110,25 @@ void initSchoolI2C()
 }
 
 // Function that adds logs
-void addLog(String Log)
-{
+void addLog(String Log){
     String Log_ = getDate() + String(" ") + Log;
 }
 
 // Function that retrieves logs from the Arduino
-void getLog(int ArduinoNo)
-{
+void getLog(int ArduinoNo){
     String Log = "Start";
-    while (Log != "")
-    {
+    while (Log != ""){
         Log = "";
         int numBytes = sw.requestFrom(ArduinoNo, (uint8_t)32);
-        for (int i = 0; i < numBytes; ++i)
-        {
+        for (int i = 0; i < numBytes; ++i){
             char c = sw.read(); // Receive a byte as character
-            if (c == char('!'))
-            {
+            if (c == char('!')){
                 break; // If we have the end-of-string byte, stop the transmission
             }
             Log += String(c);
         }
         // If we received something, record it
-        if (Log != "")
-        {
+        if (Log != ""){
             String Log_ = "From Arduino " + String(ArduinoNo) + " : " + Log;
             Serial.println("Log received : " + Log_); // DEBUG
             addLog(Log_);
@@ -152,8 +137,7 @@ void getLog(int ArduinoNo)
 }
 
 // Function that returns the time since the Arduino started in the format [hh:mm:ss]
-String getDate()
-{
+String getDate(){
     unsigned long currentMillis = millis(); // Get the time elapsed since the Arduino board started
     int seconds = (currentMillis / 1000) % 60;           // Calculate seconds
     int minutes = (currentMillis / (1000 * 60)) % 60;     // Calculate minutes
@@ -165,8 +149,7 @@ String getDate()
 }
 
 // Send a message to the specified Arduino via I2C
-void sendMessage(int ArduinoNo, int msg)
-{
+void sendMessage(int ArduinoNo, int msg){
     /*  0x01 -> initLDR
      *  0x02 -> send word
      *  0x03 -> execute Listen function
@@ -179,19 +162,16 @@ void sendMessage(int ArduinoNo, int msg)
 
 ////////////////////////////////// Robinson I2C Communication /////////////////////////////////
 
-void initRobinsonI2C()
-{
+void initRobinsonI2C(){
     Wire.begin(Arduino_adress);
     Wire.onRequest(I2COnRequestEvent);
 }
 
-void I2COnRequestEvent()
-{
+void I2COnRequestEvent(){
    // not usefull in your case 
 
 }
 
-void I2CReceiveEvent(int n)
-{
+void I2CReceiveEvent(int n){
     // not usefull in your case 
 }
